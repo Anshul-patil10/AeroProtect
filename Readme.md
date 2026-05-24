@@ -1,6 +1,6 @@
-# 🌍 AeroGuard — AI-Powered Air Quality Intelligence
+# 🌍 AeroProtect — AI-Powered Air Quality Intelligence
 
-AeroGuard is a **cinematic, AI-driven atmospheric intelligence platform** designed to transform invisible air pollution data into actionable health insights. Built for the **AIColegion Hackathon 2026 (VESIT)**, it combines real-time sensory data with machine learning to predict, explain, and guard against environmental threats across India.
+AeroProtect is a **cinematic, AI-driven atmospheric intelligence platform** designed to transform invisible air pollution data into actionable health insights. Built for the **AIColegion Hackathon 2026 (VESIT)**, it combines real-time sensory data with machine learning to predict, explain, and guard against environmental threats across India.
 
 ---
 
@@ -42,7 +42,7 @@ AeroGuard is a **cinematic, AI-driven atmospheric intelligence platform** design
 ## 📁 File Structure
 
 ```text
-AeroGuard/
+AeroProtect/
 ├── Backend/                 # Flask / FastAPI Architecture
 │   ├── app/
 │   │   ├── routes/          # API Blueprints (AI, AQI, Forecast, Risk)
@@ -124,4 +124,4 @@ Built with ❤️ by **Team 70 — CultBoyz** for **AIColegion 2026** @ **VESIT 
 </table>
 
 ---
-*© 2026 AeroGuard Intelligence. Part of the CultBoyz hackathon suite.*
+*© 2026 AeroProtect Intelligence. Part of the CultBoyz hackathon suite.*
