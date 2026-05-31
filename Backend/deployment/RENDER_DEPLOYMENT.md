@@ -40,19 +40,19 @@ Copy these into Render's Environment tab:
 # Flask Configuration
 FLASK_ENV=production
 FLASK_DEBUG=false
-SECRET_KEY=61ab5fc5e417e398777e6a50e68ba36ca70aad81606b31641282b14f3247dbfd
-JWT_SECRET_KEY=4d4ed571c102524901fe5dbbae55ef59bc5b92dc257730b8c49698fe8c56f795
+SECRET_KEY=<generate-using-python-secrets>
+JWT_SECRET_KEY=<generate-using-python-secrets>
 
 # Database (Supabase)
-DATABASE_URL=postgresql://postgres.nnsnqmxyullfgnsijtns:AeroProtect.2026@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=<your-supabase-connection-string>
 
 # CORS (Update with your actual frontend URL after deployment)
-CORS_ORIGINS=https://aero-guard-deploy.vercel.app,*
+CORS_ORIGINS=<your-frontend-url>,*
 
 # API Keys
-GEMINI_API_KEY=AIzaSyBXrw9AWAyWooRWAy9sTWN2sKakVrIg1Ko
+GEMINI_API_KEY=<your-gemini-api-key>
 GEMINI_MODEL=gemini-pro
-REALTIME_WAQI_API_KEY=ce447e42616daf4acaa532f376215a74eab11403
+REALTIME_WAQI_API_KEY=<your-waqi-api-key>
 REALTIME_WAQI_BASE_URL=https://api.waqi.info
 
 # Model Settings
@@ -66,6 +66,11 @@ DEFAULT_FORECAST_DAYS=7
 MAX_REQUEST_SIZE=1048576
 REQUEST_TIMEOUT=30
 LOG_LEVEL=INFO
+```
+
+**Generate Secret Keys:**
+```bash
+python -c "import secrets; print('SECRET_KEY=' + secrets.token_hex(32)); print('JWT_SECRET_KEY=' + secrets.token_hex(32))"
 ```
 
 ### Step 5: Deploy

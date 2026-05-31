@@ -84,10 +84,10 @@
 
    ```env
    # OLD (NeonDB)
-   # DATABASE_URL=postgresql://neondb_owner:npg_svuE7dkKTQw6@ep-odd-credit-ahje5mh1-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+   # DATABASE_URL=postgresql://neondb_owner:xxxxx@ep-xxx.aws.neon.tech/neondb?sslmode=require
 
    # NEW (Supabase)
-   DATABASE_URL=postgresql://postgres.abcdefghijklmnop:MySecurePass123!@aws-0-us-east-1.pooler.supabase.com:6543/postgres
+   DATABASE_URL=postgresql://postgres.xxxxx:YourPassword@aws-0-us-east-1.pooler.supabase.com:6543/postgres
    ```
 
 3. **Save the file**
