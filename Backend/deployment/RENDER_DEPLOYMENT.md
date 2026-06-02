@@ -1,5 +1,79 @@
 # AeroGuard Backend - Render Deployment Guide
 
+## 📋 Two Deployment Methods
+
+### Method 1: Using render.yaml (Recommended - Infrastructure as Code)
+✅ Automated configuration
+✅ Version controlled
+✅ Easy to replicate
+✅ Best practice
+
+### Method 2: Manual Dashboard Configuration
+✅ More control
+✅ Good for learning
+✅ Easier to troubleshoot
+
+---
+
+## 🚀 Method 1: Deploy with render.yaml (Recommended)
+
+### Step 1: Push Code to GitHub
+
+**Files included:**
+- ✅ `render.yaml` - Render configuration (Infrastructure as Code)
+- ✅ `runtime.txt` - Python 3.11.9
+- ✅ `requirements-fixed.txt` - Dependencies
+
+```bash
+git add .
+git commit -m "Add Render configuration for deployment"
+git push origin main
+```
+
+### Step 2: Connect to Render
+
+1. Go to [render.com](https://render.com) and login
+2. Click **"New +"** → **"Blueprint"**
+3. Connect your GitHub repository
+4. Select **AeroGuard** repository
+5. Render will detect `render.yaml` automatically
+
+### Step 3: Set Secret Environment Variables
+
+Render will prompt you to set these (marked as `sync: false` in render.yaml):
+
+```bash
+DATABASE_URL=<your-supabase-connection-string>
+GEMINI_API_KEY=<your-gemini-api-key>
+REALTIME_WAQI_API_KEY=<your-waqi-api-key>
+```
+
+**Generate Secret Keys (if needed):**
+```bash
+python -c "import secrets; print('SECRET_KEY=' + secrets.token_hex(32)); print('JWT_SECRET_KEY=' + secrets.token_hex(32))"
+```
+
+### Step 4: Deploy
+
+1. Click **"Apply"**
+2. Render will:
+   - Read `render.yaml`
+   - Create the web service
+   - Install dependencies
+   - Start your app
+3. Wait 3-5 minutes
+
+### Step 5: Update CORS
+
+After deployment, update `CORS_ORIGINS` in Render dashboard:
+```
+CORS_ORIGINS=https://your-frontend.vercel.app,https://aeroguard-backend.onrender.com
+```
+
+---
+
+## 🚀 Method 2: Manual Dashboard Configuration
+
 ## 🚀 Quick Deployment Checklist
 
 ### Step 1: Push Code to GitHub
@@ -117,11 +191,20 @@ python init_db.py
 
 ## 🔧 Troubleshooting
 
-### Build Fails with Pandas/Cython Error
+### Build Fails with Pandas/Cython Error ⭐ FIXED
 **Problem:** `error: metadata-generation-failed` for pandas
-**Solution:** ✅ Already fixed! We created `runtime.txt` to use Python 3.11.9
-- Render was using Python 3.14 (too new for pandas 2.2.0)
-- `runtime.txt` forces Python 3.11.9 (stable and compatible)
+**Cause:** Render using Python 3.14 (too new for pandas)
+**Solution:** ✅ Already fixed with THREE methods:
+- `.python-version` file (3.11.9) - Most reliable
+- `runtime.txt` file (python-3.11.9) - Backup
+- `render.yaml` runtimeVersion - Triple redundancy
+
+**If still failing:**
+1. Clear build cache in Render dashboard
+2. Manual Deploy → "Clear build cache & deploy"
+3. Check logs for: `==> Using Python version 3.11.9`
+
+See detailed fix: [`PYTHON_VERSION_FIX.md`](../PYTHON_VERSION_FIX.md)
 
 ### Build Fails
 - Check logs in Render dashboard

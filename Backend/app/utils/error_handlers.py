@@ -86,6 +86,15 @@ def register_error_handlers(app):
             "timestamp": datetime.now().isoformat(),
         }), status_code
 
+    @app.errorhandler(429)
+    def handle_rate_limit_exceeded(error):
+        """Handle rate limit exceeded errors."""
+        return _make_error_response(
+            "TOO_MANY_REQUESTS",
+            "Rate limit exceeded. Please try again later.",
+            429
+        )
+
     @app.errorhandler(AeroGuardException)
     def handle_aeroguard_exception(error):
         """Handle custom AeroGuard exceptions."""

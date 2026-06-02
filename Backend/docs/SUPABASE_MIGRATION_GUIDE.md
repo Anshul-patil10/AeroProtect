@@ -543,7 +543,7 @@ If you have existing data in NeonDB that you want to move to Supabase:
 
 ```bash
 # 1. Export from NeonDB
-pg_dump "postgresql://neondb_owner:npg_svuE7dkKTQw6@ep-odd-credit-ahje5mh1-pooler.c-3.us-east-1.aws.neon.tech/neondb" > backup.sql
+pg_dump "postgresql://user:password@host/database" > backup.sql
 
 # 2. Import to Supabase
 psql "postgresql://postgres.xxxxx:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres" < backup.sql

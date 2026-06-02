@@ -119,19 +119,40 @@ python tests/verify_supabase_data.py
 ## 🚢 Deployment
 
 ### Render (Recommended)
-See detailed guide: [`deployment/RENDER_DEPLOYMENT.md`](deployment/RENDER_DEPLOYMENT.md)
 
-**Quick Deploy:**
-1. Push to GitHub
-2. Connect to Render
-3. Set environment variables
-4. Deploy!
+**Quick Start:** [`deployment/QUICK_START.md`](deployment/QUICK_START.md) - Deploy in 5 minutes!
+
+**Detailed Guide:** [`deployment/RENDER_DEPLOYMENT.md`](deployment/RENDER_DEPLOYMENT.md)
+
+**Method Comparison:** [`deployment/DEPLOYMENT_METHODS.md`](deployment/DEPLOYMENT_METHODS.md)
+
+**Two Ways to Deploy:**
+
+#### Option A: Using render.yaml (Recommended)
+```bash
+# 1. Push to GitHub
+git push origin main
+
+# 2. On Render: New + → Blueprint → Select repo → Apply
+# 3. Set secrets (DATABASE_URL, API keys)
+# 4. Done! ✅
+```
+
+#### Option B: Manual Dashboard
+See detailed steps in [`deployment/RENDER_DEPLOYMENT.md`](deployment/RENDER_DEPLOYMENT.md)
 
 ### Docker
 ```bash
 cd deployment
 docker-compose up -d
 ```
+
+### Configuration Files
+- ✅ `render.yaml` - Render deployment config (Infrastructure as Code)
+- ✅ `.python-version` - Python 3.11.9 (for Render/pyenv)
+- ✅ `runtime.txt` - Python version (Heroku/Render compatible)
+- ✅ `requirements-fixed.txt` - Dependencies
+- ✅ `wsgi.py` - Production WSGI entry point
 
 ## 📚 Documentation
 

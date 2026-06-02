@@ -23,6 +23,8 @@ Example with custom config:
 import logging
 from flask import Flask, app
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from app.config import Config
 from app.database import init_db
@@ -32,6 +34,13 @@ from app.routes.model_comparison import model_comparison_bp
 from flask_jwt_extended import JWTManager
 
 logger = logging.getLogger(__name__)
+
+# Initialize rate limiter (will be configured in create_app)
+limiter = Limiter(
+    key_func=get_remote_address,  # Rate limit by IP address
+    default_limits=["200 per day", "50 per hour"],  # Global default limits
+    storage_uri="memory://",  # Use in-memory storage (Redis for production scale)
+)
 
 
 def create_app(config_class=None):
@@ -81,6 +90,10 @@ def create_app(config_class=None):
         # Initialize JWT
         jwt = JWTManager()
         jwt.init_app(app)
+
+        # Initialize rate limiter
+        limiter.init_app(app)
+        logger.info("✓ Rate limiter initialized (200/day, 50/hour global)")
 
         # Initialize database
         init_db(app)
@@ -162,14 +175,19 @@ def _register_error_handlers(app):
 
 def _register_blueprints(app):
     """
-    Register all route blueprints.
+    Register all route blueprints with specific rate limits.
 
     Blueprints:
-    - health.bp: Health check and status endpoints (/)
-    - forecast.bp: Air quality forecasting (/api/v1/forecast)
-    - model.bp: Model management (/api/v1/model)
-    - model_comparison_bp: Model comparison (/api/v1/model/compare)
-    - realtime_aqi.bp: Real-time AQI data (/api/v1/realtime-aqi)
+    - health.bp: Health check and status endpoints (/) - NO RATE LIMIT
+    - forecast.bp: Air quality forecasting (/api/v1/forecast) - 10/min (expensive ML)
+    - model.bp: Model management (/api/v1/model) - 20/min
+    - model_comparison_bp: Model comparison (/api/v1/model/compare) - 5/min (very expensive)
+    - realtime_aqi.bp: Real-time AQI data (/api/v1/realtime-aqi) - 30/min
+    - user_routes.bp: User management - 5/min for register/login
+    - generative_ai.bp: AI explanations - 10/min (API calls)
+    - analytics_bp.bp: Analytics - 30/min
+    - historical_analysis.bp: Historical data - 20/min
+    - health_risk.bp: Health risk assessment - 20/min
 
     Args:
         app (Flask): Flask application instance
@@ -181,27 +199,35 @@ def _register_blueprints(app):
     from app.routes import historical_analysis as historical_analysis_routes
     from app.routes import health_risk as health_risk_routes
 
-
+    # Exempt health endpoints from rate limiting
+    limiter.exempt(health.bp)
 
     blueprints = [
-        (health.bp, "Health Check"),
-        (forecast.bp, "Forecast"),
-        (model.bp, "Model Management"),
-        (model_comparison_bp, "Model Comparison"),
-        (user_routes.bp, "User API"),
-        (realtime_aqi_routes.bp, "Real-time AQI"),
-        (generative_ai_routes.bp, "Generative AI"),
-        (analytics_bp.bp, "Analytics"),
-        (historical_analysis_routes.bp, "Historical Analysis"),
-        (health_risk_routes.bp, "Health Risk Assessment")
+        (health.bp, "Health Check", None),  # No limit
+        (forecast.bp, "Forecast", "10 per minute"),
+        (model.bp, "Model Management", "20 per minute"),
+        (model_comparison_bp, "Model Comparison", "5 per minute"),
+        (user_routes.bp, "User API", "20 per minute"),
+        (realtime_aqi_routes.bp, "Real-time AQI", "30 per minute"),
+        (generative_ai_routes.bp, "Generative AI", "10 per minute"),
+        (analytics_bp.bp, "Analytics", "30 per minute"),
+        (historical_analysis_routes.bp, "Historical Analysis", "20 per minute"),
+        (health_risk_routes.bp, "Health Risk Assessment", "20 per minute")
     ]
 
     try:
-        for blueprint, name in blueprints:
+        for blueprint, name, rate_limit in blueprints:
             app.register_blueprint(blueprint)
             prefix = getattr(blueprint, "url_prefix", "/")
-            logger.info(f"  ✓ {name:25} -> {prefix}")
-        logger.info("✓ All blueprints registered")
+            
+            # Apply rate limit to blueprint if specified
+            if rate_limit:
+                limiter.limit(rate_limit)(blueprint)
+                logger.info(f"  ✓ {name:25} -> {prefix:30} (limit: {rate_limit})")
+            else:
+                logger.info(f"  ✓ {name:25} -> {prefix:30} (no limit)")
+        
+        logger.info("✓ All blueprints registered with rate limits")
     except Exception as e:
         logger.error(f"✗ Blueprint registration failed: {e}")
         raise

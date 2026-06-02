@@ -1,7 +1,7 @@
 """
 Forecast Routes
 
-Endpoints for air quality forecasting.
+Endpoints for air quality forecasting with rate limiting.
 """
 
 from flask import Blueprint, request, jsonify, current_app
@@ -35,6 +35,8 @@ def _get_services():
 def generate_forecast():
     """
     Generate air quality forecast.
+    
+    Rate limited to 10 requests/minute per IP (expensive ML computation).
 
     Request JSON:
         {

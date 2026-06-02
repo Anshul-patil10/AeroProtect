@@ -1,0 +1,74 @@
+services:
+  # AeroGuard Backend API
+  - type: web
+    name: aeroguard-backend
+    runtime: python
+    runtimeVersion: "3.11.9"  # Pin to Python 3.11.9 (pandas compatibility)
+    region: singapore  # Change to your preferred region
+    plan: free  # Options: free, starter, standard, pro
+    branch: main
+    rootDir: Backend
+    buildCommand: pip install -r requirements-fixed.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 wsgi:app
+    healthCheckPath: /health
+    
+    envVars:
+      # Flask Configuration
+      - key: FLASK_ENV
+        value: production
+      
+      - key: FLASK_DEBUG
+        value: false
+      
+      - key: SECRET_KEY
+        generateValue: true  # Render auto-generates secure key
+      
+      - key: JWT_SECRET_KEY
+        generateValue: true  # Render auto-generates secure key
+      
+      # Database (Add manually in Render dashboard)
+      - key: DATABASE_URL
+        sync: false  # Set manually in dashboard
+      
+      # CORS
+      - key: CORS_ORIGINS
+        value: "*"  # Update with your frontend URL after deployment
+      
+      # API Keys (Add manually in Render dashboard)
+      - key: GEMINI_API_KEY
+        sync: false  # Set manually in dashboard
+      
+      - key: GEMINI_MODEL
+        value: gemini-pro
+      
+      - key: REALTIME_WAQI_API_KEY
+        sync: false  # Set manually in dashboard
+      
+      - key: REALTIME_WAQI_BASE_URL
+        value: https://api.waqi.info
+      
+      # Model Settings
+      - key: MODEL_DIR
+        value: models/saved
+      
+      - key: MODEL_CACHE_TIMEOUT
+        value: 3600
+      
+      - key: MAX_FORECAST_DAYS
+        value: 30
+      
+      - key: MIN_FORECAST_DAYS
+        value: 1
+      
+      - key: DEFAULT_FORECAST_DAYS
+        value: 7
+      
+      # Request Settings
+      - key: MAX_REQUEST_SIZE
+        value: 1048576
+      
+      - key: REQUEST_TIMEOUT
+        value: 30
+      
+      - key: LOG_LEVEL
+        value: INFO
