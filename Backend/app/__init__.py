@@ -218,7 +218,7 @@ def _register_blueprints(app):
     try:
         for blueprint, name, rate_limit in blueprints:
             app.register_blueprint(blueprint)
-            prefix = getattr(blueprint, "url_prefix", "/")
+            prefix = getattr(blueprint, "url_prefix", None) or "/"
             
             # Apply rate limit to blueprint if specified
             if rate_limit:
