@@ -15,8 +15,7 @@ dist/
 dist-ssr/
 build/
 
-# Local env files
-.env
+# Local env files (keep .env for production defaults)
 .env.local
 .env.*.local
 *.local
